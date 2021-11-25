@@ -36,15 +36,7 @@
 	 IPC_EVENT_BIT(4)  |	\
 	 IPC_EVENT_BIT(5)  |	\
 	 IPC_EVENT_BIT(6)  |	\
-	 IPC_EVENT_BIT(7)  |	\
-	 IPC_EVENT_BIT(8)  |	\
-	 IPC_EVENT_BIT(9)  |	\
-	 IPC_EVENT_BIT(10) |	\
-	 IPC_EVENT_BIT(11) |	\
-	 IPC_EVENT_BIT(12) |	\
-	 IPC_EVENT_BIT(13) |	\
-	 IPC_EVENT_BIT(14) |	\
-	 IPC_EVENT_BIT(15)	\
+	 IPC_EVENT_BIT(7)  	\
 	)
 
 static const nrfx_ipc_config_t ipc_cfg = {
@@ -57,6 +49,7 @@ static const nrfx_ipc_config_t ipc_cfg = {
 		[5] = BIT(5),
 		[6] = BIT(6),
 		[7] = BIT(7),
+#if BOARD_NRF5340DK
 		[8] = BIT(8),
 		[9] = BIT(9),
 		[10] = BIT(10),
@@ -65,6 +58,7 @@ static const nrfx_ipc_config_t ipc_cfg = {
 		[13] = BIT(13),
 		[14] = BIT(14),
 		[15] = BIT(15),
+#endif
 	},
 	.receive_event_config = {
 		[0] = BIT(0),
@@ -75,6 +69,7 @@ static const nrfx_ipc_config_t ipc_cfg = {
 		[5] = BIT(5),
 		[6] = BIT(6),
 		[7] = BIT(7),
+#if BOARD_NRF5340DK
 		[8] = BIT(8),
 		[9] = BIT(9),
 		[10] = BIT(10),
@@ -83,6 +78,7 @@ static const nrfx_ipc_config_t ipc_cfg = {
 		[13] = BIT(13),
 		[14] = BIT(14),
 		[15] = BIT(15),
+#endif
 	},
 	.receive_events_enabled = IPC_EVENT_BITS,
 };

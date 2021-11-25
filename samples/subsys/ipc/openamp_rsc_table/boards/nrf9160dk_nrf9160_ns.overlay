@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2020, STMICROLECTRONICS
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	chosen {
+		/* shared memory reserved for the inter-processor communication */
+		zephyr,ipc_shm = &sram0_modem;
+		zephyr,ipc = &ipc;
+	};
+};

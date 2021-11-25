@@ -29,6 +29,8 @@
 #include <zephyr.h>
 #include <resource_table.h>
 
+#error
+
 extern char ram_console[];
 
 #define __resource Z_GENERIC_SECTION(.resource_table)

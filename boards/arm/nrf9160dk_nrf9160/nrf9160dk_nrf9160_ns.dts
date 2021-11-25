@@ -20,3 +20,6 @@
 &uart1 {
 	status = "disabled";
 };
+
+/* Include shared RAM configuration file */
+#include "nrf9160_shared_sram_planning_conf.dts"

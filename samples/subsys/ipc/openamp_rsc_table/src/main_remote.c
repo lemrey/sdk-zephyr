@@ -28,10 +28,10 @@ LOG_MODULE_REGISTER(openamp_rsc_table, LOG_LEVEL_DBG);
 
 /* Constants derived from device tree */
 #define SHM_NODE		DT_CHOSEN(zephyr_ipc_shm)
-#define SHM_START_ADDR	DT_REG_ADDR(SHM_NODE)
+#define SHM_START_ADDR		DT_REG_ADDR(SHM_NODE)
 #define SHM_SIZE		DT_REG_SIZE(SHM_NODE)
 
-#define APP_TASK_STACK_SIZE (512)
+#define APP_TASK_STACK_SIZE KB(4)
 K_THREAD_STACK_DEFINE(thread_stack, APP_TASK_STACK_SIZE);
 static struct k_thread thread_data;
 
@@ -126,18 +126,21 @@ int platform_init(void)
 		LOG_DBG("metal_init: failed: %d\n", status);
 		return -1;
 	}
+	LOG_DBG("metal init");
 
 	status = metal_register_generic_device(&shm_device);
 	if (status) {
 		LOG_DBG("Couldn't register shared memory: %d\n", status);
 		return -1;
 	}
+	LOG_DBG("registered metal device \"%s\"", SHM_DEVICE_NAME);
 
 	status = metal_device_open("generic", SHM_DEVICE_NAME, &device);
 	if (status) {
 		LOG_DBG("metal_device_open failed: %d\n", status);
 		return -1;
 	}
+	LOG_DBG("opened metal device \"%s\"", SHM_DEVICE_NAME);
 
 	/* declare shared memory region */
 	metal_io_init(&device->regions[0], (void *)SHM_START_ADDR, &shm_physmap,
@@ -148,10 +151,12 @@ int platform_init(void)
 		LOG_DBG("Failed to get shm_io region\n");
 		return -1;
 	}
+	LOG_DBG("registered metal shm region 0x%x size 0x%x", SHM_START_ADDR, SHM_SIZE);
 
 	/* declare resource table region */
 	rsc_table_get(&rsc_tab_addr, &rsc_size);
 	rsc_table = (struct st_resource_table *)rsc_tab_addr;
+	LOG_DBG("rsc table at %p size 0x%x", rsc_tab_addr, rsc_size);
 
 	metal_io_init(&device->regions[1], rsc_table,
 		      (metal_phys_addr_t *)rsc_table, rsc_size, -1, 0, NULL);
@@ -161,11 +166,12 @@ int platform_init(void)
 		LOG_DBG("Failed to get rsc_io region\n");
 		return -1;
 	}
+	LOG_DBG("registered metal rsc region %p size 0x%x", rsc_table, rsc_size);
 
 	/* setup IPM */
 	ipm_handle = device_get_binding(CONFIG_OPENAMP_IPC_DEV_NAME);
 	if (!ipm_handle) {
-		LOG_DBG("Failed to find ipm device\n");
+		LOG_DBG("Failed to find ipm device \"%s\"\n", CONFIG_OPENAMP_IPC_DEV_NAME);
 		return -1;
 	}
 
@@ -176,6 +182,8 @@ int platform_init(void)
 		LOG_DBG("ipm_set_enabled failed\n");
 		return -1;
 	}
+
+	LOG_DBG("IPM binding okay, callback set and enabled");
 
 	return 0;
 }
@@ -197,7 +205,7 @@ platform_create_rpmsg_vdev(unsigned int vdev_index,
 	struct virtio_device *vdev;
 	int ret;
 
-	vdev = rproc_virtio_create_vdev(VIRTIO_DEV_SLAVE, VDEV_ID,
+	vdev = rproc_virtio_create_vdev(VIRTIO_DEV_MASTER, VDEV_ID,
 					rsc_table_to_vdev(rsc_table),
 					rsc_io, NULL, mailbox_notify, NULL);
 
@@ -206,8 +214,12 @@ platform_create_rpmsg_vdev(unsigned int vdev_index,
 		return NULL;
 	}
 
+	LOG_DBG("virtio vdev, OK");
+
+#if 0
 	/* wait master rpmsg init completion */
 	rproc_virtio_wait_remote_ready(vdev);
+#endif
 
 	vring_rsc = rsc_table_get_vring0(rsc_table);
 	ret = rproc_virtio_init_vring(vdev, 0, vring_rsc->notifyid,
@@ -217,6 +229,7 @@ platform_create_rpmsg_vdev(unsigned int vdev_index,
 		LOG_DBG("failed to init vring 0\r\n");
 		goto failed;
 	}
+	LOG_DBG("virtio vring0 OK");
 
 	vring_rsc = rsc_table_get_vring1(rsc_table);
 	ret = rproc_virtio_init_vring(vdev, 1, vring_rsc->notifyid,
@@ -226,14 +239,18 @@ platform_create_rpmsg_vdev(unsigned int vdev_index,
 		LOG_DBG("failed to init vring 1\r\n");
 		goto failed;
 	}
+	LOG_DBG("virtio vring1 OK");
 
 	rpmsg_virtio_init_shm_pool(&shpool, NULL, SHM_SIZE);
-	ret =  rpmsg_init_vdev(&rvdev, vdev, ns_cb, shm_io, &shpool);
 
+	LOG_DBG("virtio shm pool OK");
+
+	ret =  rpmsg_init_vdev(&rvdev, vdev, ns_cb, shm_io, &shpool);
 	if (ret) {
 		LOG_DBG("failed rpmsg_init_vdev\r\n");
 		goto failed;
 	}
+	LOG_DBG("vdev init on shmem pool 0x%x", SHM_SIZE);
 
 	return rpmsg_virtio_get_rpmsg_device(&rvdev);
 
@@ -295,5 +312,5 @@ void main(void)
 	printk("Starting application thread!\n");
 	k_thread_create(&thread_data, thread_stack, APP_TASK_STACK_SIZE,
 			(k_thread_entry_t)app_task,
-			NULL, NULL, NULL, K_PRIO_COOP(7), 0, K_NO_WAIT);
+			NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
 }

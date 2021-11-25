@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(REMOTE_ZEPHYR_DIR ${CMAKE_CURRENT_BINARY_DIR}/openamp_remote-prefix/src/openamp_remote-build/zephyr)
 
+if(0)
 if("${BOARD}" STREQUAL "lpcxpresso54114_m4")
   set(BOARD_REMOTE "lpcxpresso54114_m0")
 elseif("${BOARD}" STREQUAL "lpcxpresso55s69_cpu0")
@@ -19,6 +20,7 @@ elseif("${BOARD}" STREQUAL "v2m_musca_b1")
 else()
   message(FATAL_ERROR "${BOARD} was not supported for this sample")
 endif()
+endif()
 
 message(STATUS "${BOARD} compile as Master in this sample")
 
@@ -29,6 +31,7 @@ enable_language(C ASM)
 
 target_sources(app PRIVATE src/main.c)
 
+if(0)
 include(ExternalProject)
 
 ExternalProject_Add(
@@ -41,5 +44,6 @@ ExternalProject_Add(
   # NB: Do we need to pass on more CMake variables?
   BUILD_ALWAYS True
 )
+endif()
 
 target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

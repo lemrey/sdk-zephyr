@@ -19,10 +19,10 @@
 #define VRING_COUNT             2
 #define RPMSG_IPU_C0_FEATURES   1
 
-#define VRING_RX_ADDRESS        -1  /* allocated by Master processor */
-#define VRING_TX_ADDRESS        -1  /* allocated by Master processor */
-#define VRING_BUFF_ADDRESS      -1  /* allocated by Master processor */
-#define VRING_ALIGNMENT         16  /* fixed to match with Linux constraint */
+#define VRING_RX_ADDRESS	0x20008000 + 0x5000 - 0x400  /* allocated by Master processor */
+#define VRING_TX_ADDRESS	0x20008000  /* allocated by Master processor */
+#define VRING_ALIGNMENT		4  /* fixed to match with Linux constraint */
+#define VRING_SIZE		8
 
 #endif
 

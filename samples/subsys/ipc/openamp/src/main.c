@@ -180,18 +180,21 @@ void app_task(void *arg1, void *arg2, void *arg3)
 		printk("metal_init: failed - error code %d\n", status);
 		return;
 	}
+	printk("metal initialized\n");
 
 	status = metal_register_generic_device(&shm_device);
 	if (status != 0) {
 		printk("Couldn't register shared memory device: %d\n", status);
 		return;
 	}
+	printk("metal device registered\n");
 
 	status = metal_device_open("generic", SHM_DEVICE_NAME, &device);
 	if (status != 0) {
 		printk("metal_device_open failed: %d\n", status);
 		return;
 	}
+	printk("metal device \"%s\" open\n", SHM_DEVICE_NAME);
 
 	io = metal_device_io_region(device, 0);
 	if (io == NULL) {
@@ -202,9 +205,11 @@ void app_task(void *arg1, void *arg2, void *arg3)
 	/* setup IPM */
 	ipm_handle = device_get_binding(CONFIG_OPENAMP_IPC_DEV_NAME);
 	if (ipm_handle == NULL) {
-		printk("device_get_binding failed to find device\n");
+		printk("device_get_binding failed to find device \"%s\"\n",
+		       CONFIG_OPENAMP_IPC_DEV_NAME);
 		return;
 	}
+	printk("device biding  for \"%s\"\n", CONFIG_OPENAMP_IPC_DEV_NAME);
 
 	ipm_register_callback(ipm_handle, platform_ipm_callback, NULL);
 
@@ -213,6 +218,8 @@ void app_task(void *arg1, void *arg2, void *arg3)
 		printk("ipm_set_enabled failed\n");
 		return;
 	}
+
+	printk("callback set and enabled\n");
 
 	/* setup vdev */
 	vq[0] = virtqueue_allocate(VRING_SIZE);
@@ -250,6 +257,8 @@ void app_task(void *arg1, void *arg2, void *arg3)
 		printk("rpmsg_init_vdev failed %d\n", status);
 		return;
 	}
+
+	printk("virtio shm pool okay\n");
 
 	/* Since we are using name service, we need to wait for a response
 	 * from NS setup and than we need to process it

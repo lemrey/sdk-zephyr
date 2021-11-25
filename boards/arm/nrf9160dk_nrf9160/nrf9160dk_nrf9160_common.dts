@@ -265,7 +265,7 @@ arduino_i2c: &i2c2 {
 			/* Secure image memory */
 		};
 
-		sram0_modem: image_modem@20016000 {
+		sram0_modem: image_modem@20010000 {
 			/* Modem (shared) memory */
 		};
 

@@ -29,6 +29,7 @@ static void gipm_send(uint32_t id);
 
 static void nrfx_ipc_handler(uint32_t event_mask, void *p_context)
 {
+	LOG_DBG("IPC irq emask 0x%x", event_mask);
 	if (nrfx_ipm_data.callback) {
 		while (event_mask) {
 			uint8_t event_idx = __CLZ(__RBIT(event_mask));
@@ -249,6 +250,7 @@ static void gipm_init(void)
 		    DT_INST_IRQ(0, priority),
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
+	LOG_INF("IPM initialized");
 	/* Set up signals and channels */
 	nrfx_ipc_config_load(&ipc_cfg);
 }
