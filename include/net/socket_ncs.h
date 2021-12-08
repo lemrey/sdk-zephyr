@@ -16,17 +16,7 @@
 extern "C" {
 #endif
 
-/* NCS specific protocol/address families. */
-
-#define PF_LTE 102 /**< Protocol family specific to LTE. */
-#define AF_LTE PF_LTE /**< Address family specific to LTE. */
-
 /* NCS specific protocol types. */
-
-/** Protocol numbers for LTE protocols */
-enum net_lte_protocol {
-	NPROTO_AT = 513,
-};
 
 /** Protocol numbers for LOCAL protocols */
 enum net_local_protocol {
