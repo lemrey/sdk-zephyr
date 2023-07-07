@@ -92,6 +92,11 @@ extern "C" {
 
 /* NCS specific socket options */
 
+/** sockopt: Timeout value for waiting network ack for sent data.
+ *  Valid timeout values are between 1sec to 10min.
+ */
+#define SO_WAIT_NW_ACK_TIMEOUT 27
+
 /** sockopt: disable all replies to unexpected traffics */
 #define SO_SILENCE_ALL 30
 /** sockopt: disable IPv4 ICMP replies */
