@@ -139,6 +139,15 @@ extern "C" {
  */
 #define AI_PDNSERV 0x1000
 
+/* NCS specific send() and sendto() flags */
+
+/** Request a blocking send operation until the request is acknowledged.
+ *  When used in send() or sendto(), the request will not return until the
+ *  send operation is completed by lower layers, or until the timeout, given by the SO_SNDTIMEO
+ *  socket option, is reached. Valid timeout values are 1 to 600 seconds.
+ */
+#define MSG_WAITACK 0x200
+
 #ifdef __cplusplus
 }
 #endif
