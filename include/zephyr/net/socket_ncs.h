@@ -98,6 +98,8 @@ extern "C" {
 #define SO_IP_ECHO_REPLY 31
 /** sockopt: disable IPv6 ICMP replies */
 #define SO_IPV6_ECHO_REPLY 32
+/** sockopt: enable sending data as part of exceptional events */
+#define SO_EXCEPTIONAL_DATA 33
 /** sockopt: bind to PDN */
 #define SO_BINDTOPDN 40
 /** sockopt: Release Assistance Indication feature: This will indicate that the
