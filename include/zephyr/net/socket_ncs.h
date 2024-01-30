@@ -76,6 +76,8 @@ extern "C" {
 /** sockopt: Release Assistance Indication feature: This will indicate that the
  *  application will not send any more data.
  *
+ *  @note This socket option requires the socket to be connected.
+ *
  *  @deprecated use @ref SO_RAI with value @ref RAI_NO_DATA instead.
  */
 #define SO_RAI_NO_DATA 50 __DEPRECATED_MACRO
@@ -116,8 +118,10 @@ extern "C" {
 
 /** Release assistance indication (RAI).
  *  Indicate that the application does not intend to send more data.
- *  This socket option applies immediately and lets the modem exit connected mode more
+ *  This applies immediately and lets the modem exit connected mode more
  *  quickly.
+ *
+ *  @note This requires the socket to be connected.
  */
 #define RAI_NO_DATA 1
 /** Release assistance indication (RAI).
