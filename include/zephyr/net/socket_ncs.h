@@ -71,6 +71,10 @@ extern "C" {
 
 /** sockopt: enable sending data as part of exceptional events */
 #define SO_EXCEPTIONAL_DATA 33
+/** sockopt: Keep socket open when its PDN connection is lost
+ *           or the device is put into flight mode.
+ */
+#define SO_KEEPOPEN 34
 /** sockopt: bind to PDN */
 #define SO_BINDTOPDN 40
 /** sockopt: Release Assistance Indication feature: This will indicate that the
