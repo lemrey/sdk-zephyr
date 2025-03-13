@@ -34,14 +34,38 @@ extern void z_arm_reserved(void);
 
 #if !defined(CONFIG_ARM_CUSTOM_INTERRUPT_CONTROLLER)
 
+#ifdef CONFIG_SOFTDEVICE
+#include <nrf_nvic.h>
+/* The global NVIC state required by nrf_nvic.h is provided by in a C file in the
+ * CONFIG_SOFTDEVICE component.
+ */
+#endif
+
 void arch_irq_enable(unsigned int irq)
 {
+#ifndef CONFIG_SOFTDEVICE
 	NVIC_EnableIRQ((IRQn_Type)irq);
+#else
+	int err;
+
+	err = sd_nvic_EnableIRQ((IRQn_Type)irq);
+	__ASSERT(err == 0, "IRQ %d not available to application or bad priority, err %#x",
+		 irq, err);
+	(void) err;
+#endif
 }
 
 void arch_irq_disable(unsigned int irq)
 {
+#ifndef CONFIG_SOFTDEVICE
 	NVIC_DisableIRQ((IRQn_Type)irq);
+#else
+	int err;
+
+	err = sd_nvic_DisableIRQ((IRQn_Type)irq);
+	__ASSERT(err == 0, "IRQ %d not available to application", irq);
+	(void) err;
+#endif
 }
 
 int arch_irq_is_enabled(unsigned int irq)
